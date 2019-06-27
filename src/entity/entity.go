@@ -6,6 +6,7 @@ import (
 	"gamemap"
 	"math/rand"
 	"strconv"
+	"messages"
 )
 
 type GameEntity struct {
@@ -31,7 +32,7 @@ func (e *GameEntity) Draw() {
 	blt.Layer(e.Layer)
 	blt.Color(blt.ColorFromName(e.Color))
   blt.Put(e.X*4, e.Y*2, e.Char)
-	blt.Layer(20)
+	blt.Layer(4)
 	blt.Color(blt.ColorFromName("white"))
 	
 	if hpbar = 7 - (e.HP[0] * 6) / e.HP[1]; hpbar > 6{
@@ -45,15 +46,15 @@ func (e *GameEntity) Clear() {
 	// Remove the entity from the screen
 	blt.Layer(e.Layer)
 	blt.Put(e.X*4, e.Y*2, 0)
-	blt.Layer(20)
+	blt.Layer(4)
 	blt.Put(e.X*4, e.Y*2, 0)
 }
 
-func (e *GameEntity) Hunting(edm *dijkstramaps.EntityDijkstraMap, gamemap *gamemap.Map, player *GameEntity) {
+func (e *GameEntity) Hunting(edm *dijkstramaps.EntityDijkstraMap, gamemap *gamemap.Map, player *GameEntity, message messages.Messages) {
 	var oldx, oldy, newx, newy = e.X, e.Y, 0, 0
 	// Check to see if the provided coordinates contain a blocked tile
 	if e.NPC && edm.ValuesMap[e.X][e.Y] == 1 {
-		blt.Print(1,43,e.Fight(gamemap, player))
+		message.AddMessage(e.Fight(gamemap, player))
 	}
 	if e.NPC && edm.ValuesMap[e.X][e.Y] < 9 && edm.ValuesMap[e.X][e.Y] > 1{
 		for x := -1; x < 2; x++ {

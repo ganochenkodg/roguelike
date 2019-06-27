@@ -10,6 +10,7 @@ import (
 	"dijkstramaps"
 	"fmt"
 	"runtime"
+	"messages"
 )
 
 const (
@@ -29,6 +30,8 @@ var (
 	gameMapSrc = [][]int{}
 	fieldOfView *fov.FieldOfVision
 	dmap *dijkstramaps.EntityDijkstraMap
+	gameMessages = messages.Messages{" "," "," "," "," ",}
+	
 )
 
 func init() {
@@ -79,6 +82,7 @@ func init() {
 	
 	dmap = dijkstramaps.NewEntityMap(3, player.X, player.Y, "test", MapWidth, MapHeight)
 	dmap.GenerateMap(gameMap)
+	
 }
 	
 func main() {
@@ -146,7 +150,7 @@ func renderEntities() {
 	for _, e := range entities {
 		if e.NPC{ gameMap.Tiles[e.X][e.Y].Mob = false
 		}
-		e.Hunting(dmap, gameMap, player)
+		e.Hunting(dmap, gameMap, player, gameMessages)
 		if e.NPC{ gameMap.Tiles[e.X][e.Y].Mob = true
 		}
 		if gameMap.Tiles[e.X][e.Y].Visible {
@@ -157,7 +161,7 @@ func renderEntities() {
     }
 		dmap.UpdateMap(gameMap)
 	}
-	blt.Print(1, 42, "Player X: " + strconv.Itoa(player.X) + " Y: " + strconv.Itoa(player.Y) + " HP:" + strconv.Itoa(player.HP[0]) + "/" + strconv.Itoa(player.HP[1]))
+	blt.Print(60, 41, "Player X: " + strconv.Itoa(player.X) + " Y: " + strconv.Itoa(player.Y) + " HP:" + strconv.Itoa(player.HP[0]) + "/" + strconv.Itoa(player.HP[1]))
 //	blt.Print(1, 44, "npc dmap: " + strconv.Itoa(dmap.ValuesMap[npc.X][npc.Y]))
 //	blt.Print(1, 45, "npc2 dmap: " + strconv.Itoa(dmap.ValuesMap[npc2.X][npc2.Y]))
 //	blt.Print(1, 46, "npc3 dmap: " + strconv.Itoa(dmap.ValuesMap[npc3.X][npc3.Y]))
@@ -204,6 +208,7 @@ func renderAll() {
 	// Convenience function to render all entities, followed by rendering the game map
 	renderMap()
 	renderEntities()
+	gameMessages.PrintMessages()
 //	renderDmap()
 }
 
@@ -219,7 +224,7 @@ func IsMob(dx , dy int) {
 	entitiestemp = append(entitiestemp, player)
 	for _, e := range entities {
 		if e.X == (player.X+dx) && e.Y ==(player.Y+dy) && e.NPC {
-			blt.Print(1,44,player.Fight(gameMap, e))
+			gameMessages.AddMessage(player.Fight(gameMap, e))
 		}
   	if e.HP[0] > 0{
 		  entitiestemp = append(entitiestemp, e)
