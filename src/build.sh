@@ -1,3 +1,3 @@
 #!/bin/bash
 GOPATH=$(pwd)/.. go build ./rogue.go
-./rogue &
+LD_LIBRARY_PATH=$(pwd)/bearlibterminal ./rogue &
