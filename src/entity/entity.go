@@ -18,20 +18,22 @@ type GameEntity struct {
 	NPC bool
 	Name string
 	HP []int
+	Vision int
 }
 
+//переместить entity на новую позицию
 func (e *GameEntity) Move(dx int, dy int) {
-	// Move the entity by the amount (dx, dy)
 	e.X += dx
 	e.Y += dy
 }
 
+//отрисовать entity
 func (e *GameEntity) Draw() {
-	// Draw the entity to the screen
 	var hpbar int
 	blt.Layer(e.Layer)
 	blt.Color(blt.ColorFromName(e.Color))
   blt.Put(e.X*4, e.Y*2, e.Char)
+//рисуем полоску hp. надо бы сделать больше шагов бара, хотяб 10
 	blt.Layer(4)
 	blt.Color(blt.ColorFromName("white"))
 	
@@ -42,33 +44,36 @@ func (e *GameEntity) Draw() {
 	
 }
 
+//рисуем на позиции пустой символ
 func (e *GameEntity) Clear() {
-	// Remove the entity from the screen
 	blt.Layer(e.Layer)
 	blt.Put(e.X*4, e.Y*2, 0)
 	blt.Layer(4)
 	blt.Put(e.X*4, e.Y*2, 0)
 }
 
+//ежеходовая проверка не пора ли преследовать игрока
 func (e *GameEntity) Hunting(edm *dijkstramaps.EntityDijkstraMap, gamemap *gamemap.Map, player *GameEntity, message messages.Messages) {
 	var oldx, oldy, newx, newy = e.X, e.Y, 0, 0
-	// Check to see if the provided coordinates contain a blocked tile
+  //если проверяем нпс и стоит около игрока на начало хода то вызываем сражение
 	if e.NPC && edm.ValuesMap[e.X][e.Y] == 1 {
 		message.AddMessage(e.Fight(gamemap, player))
 	}
-	if e.NPC && edm.ValuesMap[e.X][e.Y] < 9 && edm.ValuesMap[e.X][e.Y] > 1{
+	//если нпс, дальше чем на одну клетку и игрок в радиусе видимости то пытаемся подойти
+	if e.NPC && edm.ValuesMap[e.X][e.Y] < e.Vision && edm.ValuesMap[e.X][e.Y] > 1{
 		for x := -1; x < 2; x++ {
 	 		for y := -1; y < 2; y++ {
+				//ищем клетку с меньшим весом и без мобов
 				if edm.ValuesMap[oldx+x][oldy+y] < edm.ValuesMap[oldx][oldy] && !gamemap.Tiles[oldx+x][oldy+y].Mob {
           newx, newy = x, y
 				}
 			}
 		}
 	e.Move(newx,newy)
-//	blt.Refresh()
 	}
 }
 
+//битва двух entity, пока что тупорылая до безумия
 func (e *GameEntity) Fight(gamemap *gamemap.Map, target *GameEntity) string{
 	var result string
   kick:=rand.Intn(5)

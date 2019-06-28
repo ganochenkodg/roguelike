@@ -24,17 +24,15 @@ type Map struct {
 }
 
 func (m *Map) InitializeMap() {
-	// Set up a map where all the border (edge) Tiles are walls (block movement, and sight)
-	// This is just a test method, we will build maps more dynamically in the future.
+	// генерим двухмерный массив нужных размеров и инициализируем генератор рандома
 	m.Tiles = make([][]*Tile, m.Width)
 	for i := range m.Tiles {
 		m.Tiles[i] = make([]*Tile, m.Height)
 	}
-
-	// Set a seed for procedural generation
 	rand.Seed( time.Now().UTC().UnixNano())
 }
 
+//заполняем карту согласно сгенернному подземелью. добавить больше типов клеток, туманы там вские...
 func (m *Map) GenerateArena(src [][]int) {
 	for x := 0; x < m.Width; x++ {
 		for y := 0; y < m.Height; y++ {
@@ -44,6 +42,7 @@ func (m *Map) GenerateArena(src [][]int) {
 			case 11:
 				m.Tiles[x][y] = &Tile{true, true, false, false, false,"white", 0x1017, x, y}
 			case 0:
+				//иеогда рисуем полу другой спрайт, с трещинами и дырами
 				if rand.Intn(100) < 98{ 
 					m.Tiles[x][y] = &Tile{false, false, false, false, false,"white", 0x1011, x, y}
 				} else {
@@ -54,6 +53,7 @@ func (m *Map) GenerateArena(src [][]int) {
 	}
 }
 
+//черная магия
 func (m *Map) GenerateRooms(src [][]int) {
 	var predel1, predel2, predel3, predel4, ystart, yend int
 	for x := 0; x < m.Width; x++ {
@@ -203,15 +203,6 @@ func (m *Map) GenerateRooms(src [][]int) {
 	}
 
 
-}
-
-func (m *Map) IsBlocked(x int, y int) bool {
-	// Check to see if the provided coordinates contain a blocked tile
-	if m.Tiles[x][y].Blocked {
-		return true
-	} else {
-		return false
-	}
 }
 
 func (t *Tile) isVisited() bool {
