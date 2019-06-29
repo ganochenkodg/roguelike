@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"runtime"
 	"messages"
+	"namegen"
 )
 
 const (
@@ -29,6 +30,7 @@ var (
 	fieldOfView *fov.FieldOfVision
 	dmap *dijkstramaps.EntityDijkstraMap
 	gameMessages = messages.Messages{" "," "," "," "," ",}
+	gameState = "menu"
 	
 )
 
@@ -43,11 +45,37 @@ func init() {
 	blt.Set(window + "; " + font)
 	blt.Clear()
 
+	//NewGame()
+}
+func DrawMenu() {
+	blt.Color(blt.ColorFromName("white"))
+	blt.Layer(1)
+	for x := 8; x < 23; x++ {
+		for y := 5; y < 14; y++ {
+			blt.Put(x*4, y*2, 0x1000)
+		}
+	}
+	blt.Color(blt.ColorFromName("#606060"))
+	for x := 9; x < 22; x++ {
+		for y := 6; y < 13; y++ {
+			blt.Put(x*4, y*2, 0x1000)
+		}
+	}
+	if gameState == "menu" {
+		blt.Layer(2)
+		blt.Color(blt.ColorFromName("white"))
+		blt.Print(40, 14, "GO Roguelike v 0.01")
+		blt.Print(40, 16, "Press N to start New Game.")
+		blt.Print(40, 18, "Press ESC to exit.")
+	}
+}
+
+func NewGame(){
 	gameMap = &gamemap.Map{Width: MapWidth, Height: MapHeight}
 	gameMapSrc := make([][]int, MapHeight)
-  for i := 0; i < MapHeight; i++ {
-    gameMapSrc[i] = make([]int, MapWidth)
-  }
+	for i := 0; i < MapHeight; i++ {
+		gameMapSrc[i] = make([]int, MapWidth)
+	}
 	gameMap.InitializeMap()
 	gameMap.GenerateRooms(gameMapSrc)
 	gameMap.GenerateArena(gameMapSrc)
@@ -56,15 +84,17 @@ func init() {
 	npc := &entity.GameEntity{X: 28, Y: 5, Layer: 2, Char: 0x2002, Color: "white", NPC: true, Name: "NPC 1", HP: []int{20,20,}, Vision: 9}
 	npc2 := &entity.GameEntity{X: 28, Y: 5, Layer: 2, Char: 0x2002, Color: "red", NPC: true, Name: "NPC 2", HP: []int{20,20,}, Vision: 5}
 	npc3 := &entity.GameEntity{X: 28, Y: 5, Layer: 2, Char: 0x2002, Color: "blue", NPC: true, Name: "NPC 3", HP: []int{20,20,}, Vision: 15}
-	entities = append(entities, player, npc, npc2, npc3)
-  for _, e := range entities {
+	player.Name = namegen.GenerateName()
+	newentities := append(entities, player, npc, npc2, npc3)
+	entities = newentities
+	for _, e := range entities {
 		e.X = rand.Intn(MapWidth - 2) + 1
 		e.Y = rand.Intn(MapHeight - 2) + 1
 		for ok := true; ok; ok = gameMap.Tiles[e.X][e.Y].IsBlock() {
 			e.X = rand.Intn(MapWidth - 2) + 1
 			e.Y = rand.Intn(MapHeight - 2) + 1
-  	}
-  }
+		}
+	}
 	
 	fieldOfView = &fov.FieldOfVision{}
 	fieldOfView.Initialize()
@@ -72,12 +102,12 @@ func init() {
 	
 	dmap = dijkstramaps.NewEntityMap(3, player.X, player.Y, "test", MapWidth, MapHeight)
 	dmap.GenerateMap(gameMap)
-	
 }
 	
 func main() {
 	// игра периодически паникует, затычки от фаталов ниже. с ними норм
-	renderAll()
+	//renderAll()
+	DrawMenu()
 	defer recovery()
 	runtime.LockOSThread()
 	for {
@@ -85,17 +115,12 @@ func main() {
     blt.Clear()
 		key := blt.Read()
 
-		// каждый ход стираем игрока и мобов, потмо в новом месте нарисуютс как походят
-		for _, e := range entities {
-			e.Clear()
-		}
 
 		if key != blt.TK_CLOSE {
 			handleInput(key, player)
 		} else {
 			break
 		}
-		renderAll()
 	}
 
 	blt.Close()
@@ -106,7 +131,25 @@ func handleInput(key int, player *entity.GameEntity) {
 	var (
 		dx, dy int
 	)
-
+	if gameState == "menu" {
+	DrawMenu()
+	switch key {
+	case blt.TK_ESCAPE:
+		blt.Close()
+	case blt.TK_N:
+		gameState = "game"
+		blt.Clear()
+		NewGame()
+		renderAll()
+	}
+	return
+	}
+	
+	if gameState == "game" {
+	// каждый ход стираем игрока и мобов, потмо в новом месте нарисуютс как походят
+	for _, e := range entities {
+	 e.Clear()
+  }
 	switch key {
 	case blt.TK_RIGHT , blt.TK_KP_6:
 		dx, dy = 1, 0
@@ -133,6 +176,9 @@ func handleInput(key int, player *entity.GameEntity) {
 	}
 	//если моб в направлении шага то драться
 	IsMob(dx,dy)
+	renderAll()
+	return
+  }
 }
 
 func renderEntities() {
@@ -152,7 +198,7 @@ func renderEntities() {
     }
 		dmap.UpdateMap(gameMap)
 	}
-	blt.Print(60, 41, "Player X: " + strconv.Itoa(player.X) + " Y: " + strconv.Itoa(player.Y) + " HP:" + strconv.Itoa(player.HP[0]) + "/" + strconv.Itoa(player.HP[1]))
+	blt.Print(60, 41, player.Name + " X: " + strconv.Itoa(player.X) + " Y: " + strconv.Itoa(player.Y) + " HP:" + strconv.Itoa(player.HP[0]) + "/" + strconv.Itoa(player.HP[1]))
 }
 
 func renderMap() {
