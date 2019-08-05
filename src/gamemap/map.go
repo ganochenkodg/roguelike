@@ -3,6 +3,7 @@ package gamemap
 import (
 	"math/rand"
 	"time"
+	"dungeon"
 )
 
 type Tile struct {
@@ -55,153 +56,25 @@ func (m *Map) GenerateArena(src [][]int) {
 
 //черная магия
 func (m *Map) GenerateRooms(src [][]int) {
-	var predel1, predel2, predel3, predel4, ystart, yend int
 	for x := 0; x < m.Width; x++ {
 		for y := 0; y < m.Height; y++ {
-			src[y][x] = 12
+			src[y][x] = 11
 		}
 	}
-	razrez1:= rand.Intn(m.Width/3) + 5
-	razrez2:= rand.Intn(m.Width/3) + 3 
-	razrez3:= m.Width - rand.Intn(m.Width/4) - razrez1
-	razrez4:= m.Width - rand.Intn(m.Width/4) - 5
-	razrez5:= rand.Intn(m.Height/2) + 3
-	razrez6:= rand.Intn(m.Height/2) + (m.Height / 3)
-	razrez7:= rand.Intn(m.Height/2) + (m.Height / 4)
-	razrez8:= rand.Intn(m.Height/2) + (m.Height / 4) + 3
-	for x := 0; x < razrez1; x++ {
-		for y := 0; y < razrez5; y++ {
-		  if x == 0 || x == razrez1 - 1 || y == 0 || y == razrez5 - 1 {
+
+	for x := 1; x < m.Width - 1; x++ {
+		for y := 1; y < m.Height - 1; y++ {
+			src[y][x] = 0
+		}
+	}
+	dungeon := dungeon.NewDungeon(30, 20, 8)
+	for x := 0; x < m.Width; x++ {
+		for y := 0; y < m.Height; y++ {
+			if dungeon.Grid[x][y] == 0{
 				src[y][x] = 11
-			} else {
-				src[y][x] = 0
 			}
 		}
 	}
-
-	for x := 0; x < razrez2; x++ {
-		for y := razrez6; y < m.Height; y++ {
-			if x == 0 || x == razrez2 - 1 || y == razrez6 || y == m.Height - 1 {
-				src[y][x] = 11
-			} else {
-				src[y][x] = 0
-			}
-		}
-	}
-
-	for x := razrez3; x < m.Width; x++ {
-		for y := 0; y < razrez7; y++ {
-		  if x == razrez3 || x == m.Width - 1 || y == 0 || y == razrez7 - 1 {
-				src[y][x] = 11
-			} else {
-				src[y][x] = 0
-			}
-		}
-	}
-
-	for x := razrez4; x < m.Width; x++ {
-		for y := razrez8; y < m.Height; y++ {
-			if x == razrez4 || x == m.Width - 1 || y == razrez8 || y == m.Height - 1 {
-				src[y][x] = 11
-			} else {
-				src[y][x] = 0
-			}
-		}
-	}
-
-	if razrez1 < razrez2 {
-		predel1 = razrez1 - 2 -  rand.Intn(razrez1/3)
-	} else {
-		predel1 = razrez2 - 2 -  rand.Intn(razrez2/3)
-	}
-	
-	if predel1 < 1{
-		predel1 = 1
-	}
-	
-	if razrez3 < razrez4 {
-		predel2 = razrez4 + 2 + rand.Intn(razrez3/5)
-	} else {
-		predel2 = razrez3 + 2 + rand.Intn(razrez4/5)
-	}
-	
-	if predel2 > (m.Width - 2){
-		predel2 = m.Width - 2
-	}
-	
-	if razrez5 < razrez7 {
-		predel3 = razrez5 - 2 - rand.Intn(razrez5/3)
-	} else {
-		predel3 = razrez7 - 2 - rand.Intn(razrez7/3)
-	}
-	
-	if predel3 < 1{
-		predel3 = 1
-	}
-	
-	if razrez6 < razrez8 {
-		predel4 = razrez8 + 1 + rand.Intn(razrez6/5)
-	} else {
-		predel4 = razrez6 + 1 + rand.Intn(razrez8/5)
-	}
-	
-	if predel4 > (m.Height - 2){
-		predel4 = m.Height - 2
-	}
-
-
-	if razrez5 < razrez6 +1 {
-		ystart = razrez5 - 1
-		yend = razrez6 + 1
-	} else {
-		ystart = razrez6
-		yend = razrez6 + 1
-	}
-	for y := ystart; y < yend; y++ {
-		src[y][predel1] = 0
-		src[y][predel1 - 1] = 11
-		src[y][predel1 + 1] = 11
-	}
-	
-	if razrez7 < razrez8 + 1 {
-		ystart = razrez7 - 1
-		yend = razrez8 + 1
-	} else {
-		ystart = razrez8
-		yend = razrez8 + 1
-	}
-	for y := ystart; y < yend; y++ {
-		src[y][predel2] = 0
-		src[y][predel2 - 1] = 11
-		src[y][predel2 + 1] = 11
-	}
-	
-	if razrez1 < razrez3 + 1 {
-		ystart = razrez1 - 1
-		yend = razrez3 + 1
-	} else {
-		ystart = razrez3
-		yend = razrez3 + 1
-	}
-	for y := ystart; y < yend; y++ {
-		src[predel3][y] = 0
-		src[predel3 - 1][y] = 11
-		src[predel3 + 1][y] = 11
-	}
-	
-	if razrez2 < razrez4 + 1 {
-		ystart = razrez2 - 1
-		yend = razrez4 + 1
-	} else {
-		ystart = razrez4
-		yend = razrez4 + 1
-	}
-	for y := ystart; y < yend; y++ {
-		src[predel4][y] = 0
-		src[predel4 - 1][y] = 11
-		src[predel4 + 1][y] = 11
-	}
-
 
 }
 
