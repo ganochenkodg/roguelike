@@ -65,7 +65,7 @@ func DrawMenu() {
 		blt.Layer(2)
 		blt.Color(blt.ColorFromName("white"))
 		blt.Print(40, 14, "GO Roguelike v 0.01")
-		blt.Print(40, 16, "Press N to start New Game.")
+		blt.Print(40, 16, "Press any key to start New Game.")
 		blt.Print(40, 18, "Press ESC to exit.")
 	}
 }
@@ -136,7 +136,7 @@ func handleInput(key int, player *entity.GameEntity) {
 	switch key {
 	case blt.TK_ESCAPE:
 		blt.Close()
-	case blt.TK_N:
+	default:
 		gameState = "game"
 		blt.Clear()
 		NewGame()
