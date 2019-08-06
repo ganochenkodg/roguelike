@@ -70,7 +70,7 @@ func (m *Map) GenerateRooms(src [][]int) {
 		}
 	}
 	rand.Seed( time.Now().UTC().UnixNano())
-	dungeon := dungeon.NewDungeon(30, 20, rand.Intn(7) + 4)
+	dungeon := dungeon.NewDungeon(m.Width, m.Height, rand.Intn(20) + 10)
 	for x := 0; x < m.Width; x++ {
 		for y := 0; y < m.Height; y++ {
 			if dungeon.Grid[x][y] == 0{

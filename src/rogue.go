@@ -12,13 +12,12 @@ import (
 	"runtime"
 	"messages"
 	"namegen"
+	"time"
 )
 
 const (
 	WindowSizeX = 30
 	WindowSizeY = 20
-	MapWidth = WindowSizeX
-	MapHeight = WindowSizeY
 	Title = "GoRogue"
 )
 
@@ -31,12 +30,13 @@ var (
 	dmap *dijkstramaps.EntityDijkstraMap
 	gameMessages = messages.Messages{" "," "," "," "," ",}
 	gameState = "menu"
+	MapWidth = WindowSizeX
+	MapHeight = WindowSizeY
 	
 )
 
 func init() {
 	blt.Open()
-
 	size := "size="+strconv.Itoa(WindowSizeX * 4)+"x"+strconv.Itoa(WindowSizeY * 2 + 6)
 	title := "title='" + Title + "'"
 	window := "window: " + size + "," + title
@@ -71,6 +71,9 @@ func DrawMenu() {
 }
 
 func NewGame(){
+	rand.Seed( time.Now().UTC().UnixNano())
+	MapWidth = rand.Intn(40) + 40
+	MapHeight = rand.Intn(40) + 40
 	gameMap = &gamemap.Map{Width: MapWidth, Height: MapHeight}
 	gameMapSrc := make([][]int, MapHeight)
 	for i := 0; i < MapHeight; i++ {
