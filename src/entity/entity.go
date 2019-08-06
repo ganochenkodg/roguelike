@@ -28,11 +28,12 @@ func (e *GameEntity) Move(dx int, dy int) {
 }
 
 //отрисовать entity
-func (e *GameEntity) Draw() {
+func (e *GameEntity) Draw(camerax, cameray int) {
 	var hpbar int
 	blt.Layer(e.Layer)
 	blt.Color(blt.ColorFromName(e.Color))
-  blt.Put(e.X*4, e.Y*2, e.Char)
+	newx, newy := GetCamera(e.X, e.Y, camerax, cameray)
+  blt.Put(newx*4, newy*2, e.Char)
 //рисуем полоску hp. надо бы сделать больше шагов бара, хотяб 10
 	blt.Layer(4)
 	blt.Color(blt.ColorFromName("white"))
@@ -40,16 +41,17 @@ func (e *GameEntity) Draw() {
 	if hpbar = 7 - (e.HP[0] * 6) / e.HP[1]; hpbar > 6{
 		hpbar = 6
 	}
-	blt.Put(e.X*4, e.Y*2, hpbar + 0x3000)
+	blt.Put(newx*4, newy*2, hpbar + 0x3000)
 	
 }
 
 //рисуем на позиции пустой символ
-func (e *GameEntity) Clear() {
+func (e *GameEntity) Clear(camerax, cameray int) {
+	newx, newy := GetCamera(e.X, e.Y, camerax, cameray)
 	blt.Layer(e.Layer)
-	blt.Put(e.X*4, e.Y*2, 0)
+	blt.Put(newx*4, newy*2, 0)
 	blt.Layer(4)
-	blt.Put(e.X*4, e.Y*2, 0)
+	blt.Put(newx*4, newy*2, 0)
 }
 
 //ежеходовая проверка не пора ли преследовать игрока
@@ -85,10 +87,19 @@ func (e *GameEntity) Fight(gamemap *gamemap.Map, target *GameEntity) string{
 		if e.NPC {
 			result = result + ". You lose!"
 		} else {
-			target.Clear()
+			target.Clear(gamemap.CameraX, gamemap.CameraY)
 			gamemap.Tiles[target.X][target.Y].Mob = false
 			result = result + ".You kill " + target.Name
 		}
 	}
 	return result
+}
+
+func GetCamera(x ,y, camerax, cameray int) (int, int){
+	newx := 15 + x - camerax
+	newy := 10 + y - cameray
+	if cameray > 20{
+		cameray = -1
+		} 
+	return newx, newy
 }

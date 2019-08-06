@@ -95,6 +95,7 @@ func NewGame(){
 			e.Y = rand.Intn(MapHeight - 2) + 1
 		}
 	}
+	gameMap.CameraX, gameMap.CameraY = player.X, player.Y
 	
 	fieldOfView = &fov.FieldOfVision{}
 	fieldOfView.Initialize()
@@ -148,7 +149,7 @@ func handleInput(key int, player *entity.GameEntity) {
 	if gameState == "game" {
 	// каждый ход стираем игрока и мобов, потмо в новом месте нарисуютс как походят
 	for _, e := range entities {
-	 e.Clear()
+	 e.Clear(gameMap.CameraX, gameMap.CameraY)
   }
 	switch key {
 	case blt.TK_RIGHT , blt.TK_KP_6:
@@ -171,6 +172,7 @@ func handleInput(key int, player *entity.GameEntity) {
 	// проверяем что там куда шагаем не стена и не нпс
 	if !gameMap.Tiles[player.X + dx][player.Y + dy].IsBlock() && !gameMap.Tiles[player.X + dx][player.Y + dy].Mob {
 		player.Move(dx, dy)
+		gameMap.CameraX, gameMap.CameraY = player.X, player.Y
 		dmap.UpdateSourceCoordinates(player.X, player.Y)
 		dmap.UpdateMap(gameMap)
 	}
@@ -191,10 +193,11 @@ func renderEntities() {
 		}
 		//рисуем если игрок видит их
 		if gameMap.Tiles[e.X][e.Y].Visible {
-	    e.Draw()
+	    e.Draw(gameMap.CameraX, gameMap.CameraY)
+			newx, newy := entity.GetCamera(e.X, e.Y, gameMap.CameraX, gameMap.CameraY)
 			blt.Layer(1)
 			blt.Color(blt.ColorFromName(gameMap.Tiles[e.X][e.Y].Color))
-			blt.Put(e.X*4, e.Y*2, gameMap.Tiles[e.X][e.Y].Symbol)
+			blt.Put(newx*4, newy*2, gameMap.Tiles[e.X][e.Y].Symbol)
     }
 		dmap.UpdateMap(gameMap)
 	}
@@ -207,7 +210,8 @@ func renderMap() {
 	for x := 0; x < gameMap.Width; x++ {
 		for y := 0; y < gameMap.Height; y++ {
 			blt.Color(blt.ColorFromName(gameMap.Tiles[x][y].Color))
-      blt.Put(x*4, y*2, gameMap.Tiles[x][y].Symbol)
+			newx, newy := entity.GetCamera(x, y, gameMap.CameraX, gameMap.CameraY)
+      blt.Put(newx*4, newy*2, gameMap.Tiles[x][y].Symbol)
 		}
 	}
 }

@@ -21,6 +21,8 @@ type Tile struct {
 type Map struct {
 	Width  int
 	Height int
+	CameraX int
+	CameraY int
 	Tiles  [][]*Tile
 }
 
