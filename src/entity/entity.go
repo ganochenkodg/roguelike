@@ -19,8 +19,8 @@ type GameEntity struct {
 	Name string
 	HP []int
 	Vision int
-	Speed int
-	SpeedPool float
+	Speed float32
+	SpeedPool float32
 }
 
 //переместить entity на новую позицию
