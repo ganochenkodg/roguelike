@@ -19,6 +19,8 @@ type GameEntity struct {
 	Name string
 	HP []int
 	Vision int
+	Speed int
+	SpeedPool float
 }
 
 //переместить entity на новую позицию
@@ -57,7 +59,14 @@ func (e *GameEntity) Clear(camerax, cameray int) {
 //ежеходовая проверка не пора ли преследовать игрока
 func (e *GameEntity) Hunting(edm *dijkstramaps.EntityDijkstraMap, gamemap *gamemap.Map, player *GameEntity, message messages.Messages) {
 	var oldx, oldy, newx, newy = e.X, e.Y, 0, 0
+	if e.NPC && edm.ValuesMap[e.X][e.Y] < e.Vision{
+		e.SpeedPool += (100.0 / player.Speed)
+	} else {
+		e.SpeedPool = 0.0
+	}
   //если проверяем нпс и стоит около игрока на начало хода то вызываем сражение
+	for e.SpeedPool > (100.0 / e.Speed) {
+		e.SpeedPool -= (100.0 / e.Speed)
 	if e.NPC && edm.ValuesMap[e.X][e.Y] == 1 {
 		message.AddMessage(e.Fight(gamemap, player))
 	}
@@ -72,7 +81,9 @@ func (e *GameEntity) Hunting(edm *dijkstramaps.EntityDijkstraMap, gamemap *gamem
 			}
 		}
 	e.Move(newx,newy)
+	oldx, oldy, newx, newy = e.X, e.Y, 0, 0
 	}
+}
 }
 
 //битва двух entity, пока что тупорылая до безумия

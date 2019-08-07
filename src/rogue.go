@@ -83,10 +83,10 @@ func NewGame(){
 	gameMap.GenerateRooms(gameMapSrc)
 	gameMap.GenerateArena(gameMapSrc)
 	//делаем игрока, 3 моба и раскидываем всех по карте на незанятые точки
-	player = &entity.GameEntity{X: 3, Y: 3, Layer: 3, Char: 0x2001, Color: "white", NPC: false, Name: "Player", HP: []int{40,40,}, Vision: 5}
-	npc := &entity.GameEntity{X: 28, Y: 5, Layer: 2, Char: 0x2002, Color: "white", NPC: true, Name: "NPC 1", HP: []int{20,20,}, Vision: 9}
-	npc2 := &entity.GameEntity{X: 28, Y: 5, Layer: 2, Char: 0x2002, Color: "red", NPC: true, Name: "NPC 2", HP: []int{20,20,}, Vision: 5}
-	npc3 := &entity.GameEntity{X: 28, Y: 5, Layer: 2, Char: 0x2002, Color: "blue", NPC: true, Name: "NPC 3", HP: []int{20,20,}, Vision: 15}
+	player = &entity.GameEntity{X: 3, Y: 3, Layer: 3, Char: 0x2001, Color: "white", NPC: false, Name: "Player", HP: []int{40,40,}, Vision: 5, Speed: 10}
+	npc := &entity.GameEntity{X: 28, Y: 5, Layer: 2, Char: 0x2002, Color: "white", NPC: true, Name: "NPC 1", HP: []int{20,20,}, Vision: 9, Speed: 10, SpeedPool: 0.0}
+	npc2 := &entity.GameEntity{X: 28, Y: 5, Layer: 2, Char: 0x2002, Color: "red", NPC: true, Name: "NPC 2", HP: []int{20,20,}, Vision: 5, Speed: 6, SpeedPool: 0.0}
+	npc3 := &entity.GameEntity{X: 28, Y: 5, Layer: 2, Char: 0x2002, Color: "blue", NPC: true, Name: "NPC 3", HP: []int{20,20,}, Vision: 15, Speed: 20, SpeedPool: 0.0}
 	player.Name = namegen.GenerateName()
 	newentities := append(entities, player, npc, npc2, npc3)
 	entities = newentities
