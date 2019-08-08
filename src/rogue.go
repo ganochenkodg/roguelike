@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	WindowSizeX = 30
-	WindowSizeY = 20
+	WindowSizeX = 23
+	WindowSizeY = 15
 	Title = "GoRogue"
 )
 
@@ -50,13 +50,13 @@ func init() {
 func DrawMenu() {
 	blt.Color(blt.ColorFromName("white"))
 	blt.Layer(1)
-	for x := 8; x < 23; x++ {
+	for x := 5; x < 18; x++ {
 		for y := 5; y < 14; y++ {
 			blt.Put(x*4, y*2, 0x1000)
 		}
 	}
 	blt.Color(blt.ColorFromName("#606060"))
-	for x := 9; x < 22; x++ {
+	for x := 6; x < 17; x++ {
 		for y := 6; y < 13; y++ {
 			blt.Put(x*4, y*2, 0x1000)
 		}
@@ -64,16 +64,16 @@ func DrawMenu() {
 	if gameState == "menu" {
 		blt.Layer(2)
 		blt.Color(blt.ColorFromName("white"))
-		blt.Print(40, 14, "GO Roguelike v 0.01")
-		blt.Print(40, 16, "Press any key to start New Game.")
-		blt.Print(40, 18, "Press ESC to exit.")
+		blt.Print(28, 14, "GO Roguelike v 0.01")
+		blt.Print(28, 16, "Press any key to start New Game.")
+		blt.Print(28, 18, "Press ESC to exit.")
 	}
 }
 
 func NewGame(){
 	rand.Seed( time.Now().UTC().UnixNano())
 	MapWidth = rand.Intn(40) + 40
-	MapHeight = rand.Intn(40) + 40
+	MapHeight = rand.Intn(30) + 30
 	gameMap = &gamemap.Map{Width: MapWidth, Height: MapHeight}
 	gameMapSrc := make([][]int, MapHeight)
 	for i := 0; i < MapHeight; i++ {
@@ -204,7 +204,7 @@ func renderEntities() {
     }
 		dmap.UpdateMap(gameMap)
 	}
-	blt.Print(60, 41, player.Name + " X: " + strconv.Itoa(player.X) + " Y: " + strconv.Itoa(player.Y) + " HP:" + strconv.Itoa(player.HP[0]) + "/" + strconv.Itoa(player.HP[1]))
+	blt.Print(50, 31, player.Name + " X: " + strconv.Itoa(player.X) + " Y: " + strconv.Itoa(player.Y) + " HP:" + strconv.Itoa(player.HP[0]) + "/" + strconv.Itoa(player.HP[1]))
 }
 
 func renderMap() {

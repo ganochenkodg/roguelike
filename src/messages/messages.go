@@ -21,8 +21,8 @@ func (m Messages) AddMessage(s string) {
 
 func (m Messages) PrintMessages() {
 	blt.Layer(5)
-	blt.ClearArea(1,42,100,5)
+	blt.ClearArea(1,32,100,5)
 	for x:=0; x < 5; x++ {
-		blt.Print(1,41+x,m[x])
+		blt.Print(1,31+x,m[x])
 	}
 }

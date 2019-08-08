@@ -107,9 +107,9 @@ func (e *GameEntity) Fight(gamemap *gamemap.Map, target *GameEntity) string{
 }
 
 func GetCamera(x ,y, camerax, cameray int) (int, int){
-	newx := 15 + x - camerax
-	newy := 10 + y - cameray
-	if newy > 18{
+	newx := 12 + x - camerax
+	newy := 8 + y - cameray
+	if newy > 14{
 		newy = -1
 		} 
 	return newx, newy
