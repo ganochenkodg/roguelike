@@ -40,8 +40,6 @@ func (m *Map) GenerateArena(src [][]int) {
 	for x := 0; x < m.Width; x++ {
 		for y := 0; y < m.Height; y++ {
 			switch src[y][x] {
-			case 12:
-				m.Tiles[x][y] = &Tile{true, true, false, false, false, "black", 0, x, y}
 			case 11:
 				m.Tiles[x][y] = &Tile{true, true, false, false, false,"white", 0x1017, x, y}
 			case 0:
