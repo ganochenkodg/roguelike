@@ -210,6 +210,14 @@ func handleInput(key int, player *entity.GameEntity) {
 		gameMap.CameraX, gameMap.CameraY = player.X, player.Y
 		dmap.UpdateSourceCoordinates(player.X, player.Y)
 		dmap.UpdateMap(gameMap)
+	}else if gameMap.Tiles[player.X + dx][player.Y + dy].IsDoor(){
+		if rand.Intn(10) > 6{
+			gameMap.Tiles[player.X + dx][player.Y + dy] = &gamemap.Tile{false, false, false, false, false,"white", 0x1004, player.X + dx, player.Y + dy}
+		  dmap.UpdateMap(gameMap)
+		  gameMessages.AddMessage("You open the door")
+		} else {
+			gameMessages.AddMessage("You cant open the door, try again")
+		}
 	}
 	//если моб в направлении шага то драться
 	IsMob(dx,dy)
@@ -276,7 +284,9 @@ func renderMapScreen() {
 				blt.Print(x + xoffset, y + yoffset, ".")
 			case 0x1003:
 				blt.Print(x + xoffset, y + yoffset, "|")
-			case 0x1017:
+			case 0x1004:
+				blt.Print(x + xoffset, y + yoffset, "+")
+			case 0x1000:
 				blt.Print(x + xoffset, y + yoffset, "#")
 			}
 		}

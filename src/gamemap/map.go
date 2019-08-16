@@ -54,14 +54,17 @@ func (m *Map) GenerateArena(src [][]int) {
 		}
 	}
 	doorx , doory := 0, 0
-	for x := 0; x < rand.Intn(5) + 10; x++{
+	for x := 0; x < rand.Intn(5) + 7;{
 	doorx = rand.Intn(m.Width - 2) + 1
 	doory = rand.Intn(m.Height - 2) + 1
-	for ok := true; ok; ok = m.IsDoorReady(doorx,doory) {
-		doorx = rand.Intn(m.Width - 2) + 1
-		doorx = rand.Intn(m.Height - 2) + 1
-	}
-	m.Tiles[doorx][doory] = &Tile{true, true, false, false, false,"white", 0x1003, doorx, doory}
+//	for ok := false; ok == false; ok = m.IsDoorReady(doorx,doory) {
+//		doorx = rand.Intn(m.Width - 2) + 1
+//		doorx = rand.Intn(m.Height - 2) + 1
+//	}
+	if m.IsDoorReady(doorx,doory) {
+		m.Tiles[doorx][doory] = &Tile{true, true, false, false, false,"white", 0x1003, doorx, doory}
+		x++
+  }
   }
 }
 
@@ -90,8 +93,16 @@ func (m *Map) GenerateRooms(src [][]int) {
 
 }
 
-func (t *Tile) isVisited() bool {
+func (t *Tile) IsVisited() bool {
 	return t.Visited
+}
+
+func (t *Tile) IsDoor() bool {
+	if t.Symbol == 0x1003{
+		return true
+	} else{
+		return false
+	}
 }
 
 func (t *Tile) IsWall() bool {
@@ -103,18 +114,14 @@ func (t *Tile) IsWall() bool {
 }
 
 func (t *Tile) IsBlock() bool {
-	if t.Blocked {
-		return true
-	} else {
-		return false
-	}
+	return t.Blocked
 }
 
 func (m *Map) IsDoorReady(x,y int) bool {
-	if m.Tiles[x-1][y].Blocked && m.Tiles[x+1][y].Blocked && !(m.Tiles[x][y-1].Blocked) && !(m.Tiles[x][y+1].Blocked){
+	if m.Tiles[x-1][y].Blocked && m.Tiles[x+1][y].Blocked && !m.Tiles[x][y-1].Blocked && !m.Tiles[x][y+1].Blocked{
 		return true
-	} else if m.Tiles[x][y-1].Blocked && m.Tiles[x][y+1].Blocked && !(m.Tiles[x-1][y].Blocked) && !(m.Tiles[x+1][y].Blocked) {
-		return true
+	} else if m.Tiles[x][y-1].Blocked && m.Tiles[x][y+1].Blocked && !m.Tiles[x-1][y].Blocked && !m.Tiles[x+1][y].Blocked {
+	return true
 	} else{
 		return false
 	}
